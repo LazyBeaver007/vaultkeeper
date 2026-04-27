@@ -1,6 +1,12 @@
 import {AppShell} from "../layouts/AppShell"
+import { useThemeStore } from "../stores/themeStore"
 
 export default function App() 
 {
-    return <AppShell/>
+    const activeTheme = useThemeStore((state)=>state.activeTheme)
+    return (
+        <div data-theme={activeTheme}>
+        <AppShell/>
+        </div>
+    );
 }

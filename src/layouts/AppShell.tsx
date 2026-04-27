@@ -1,18 +1,37 @@
-export function AppShell()
-{
-    return (
-        <div className="app-shell">
-            <aside className="sidebar"> Vaults</aside>
+import { themes } from "../app/themes";
+import { useThemeStore } from "../stores/themeStore";
 
-            <main className="main-content">
-                <header className="topbar">VaultKeeper</header>
+export function AppShell() {
+  const { activeTheme, setTheme } = useThemeStore();
 
-                <section className="workspace">
-                Welcome to VaultKeeper
-                </section>
-                </main>
+  return (
+    <div className="app-shell">
+      <aside className="sidebar">
+        <h2>Vaults</h2>
+      </aside>
 
-                <aside className="details-panel">Details</aside>
-                </div>
-    );
+      <main className="main-content">
+        <header className="topbar">
+          <span>VaultKeeper</span>
+
+          <select
+            value={activeTheme}
+            onChange={(e) => setTheme(e.target.value as any)}
+          >
+            {themes.map((theme) => (
+              <option key={theme.id} value={theme.id}>
+                {theme.label}
+              </option>
+            ))}
+          </select>
+        </header>
+
+        <section className="workspace">
+          Welcome to Vaultkeeper
+        </section>
+      </main>
+
+      <aside className="details-panel">Details</aside>
+    </div>
+  );
 }
