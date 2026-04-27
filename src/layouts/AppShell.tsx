@@ -1,5 +1,6 @@
 import { themes } from "../app/themes";
 import { useThemeStore } from "../stores/themeStore";
+import { CreateVault } from "../features/vault/CreateVault";
 
 export function AppShell() {
   const { activeTheme, setTheme } = useThemeStore();
@@ -27,8 +28,10 @@ export function AppShell() {
         </header>
 
         <section className="workspace">
-          Welcome to Vaultkeeper
+          <CreateVault/>
         </section>
+
+        
       </main>
 
       <aside className="details-panel">Details</aside>

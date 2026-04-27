@@ -92,3 +92,16 @@ select {
   border: 1px solid var(--border);
   padding: 0.35rem 0.5rem;
 }
+
+input, button {
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+  margin-top: 0.5rem;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+button {
+  cursor: pointer;
+}
