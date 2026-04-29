@@ -1,14 +1,27 @@
 import { themes } from "../app/themes";
 import { useThemeStore } from "../stores/themeStore";
 import { CreateVault } from "../features/vault/CreateVault";
+import { VaultLauncher } from "../features/vault/VaultLauncher";
+import { useVaultStore } from "../stores/vaultStore";
+
 
 export function AppShell() {
   const { activeTheme, setTheme } = useThemeStore();
+  const activeVault = useVaultStore((s)=> s.activeVault);
+  const recentVaults = useVaultStore((s)=>s.recentVaults);
+
 
   return (
     <div className="app-shell">
       <aside className="sidebar">
         <h2>Vaults</h2>
+
+        {activeVault? (
+            <p>{activeVault.name}</p>
+        ):(<p> No Open Vault </p>)}
+        <hr />
+        <h3> Recent </h3>
+        {recentVaults.map((vault)=>(<p key={vault.path}>{vault.name}</p>))}
       </aside>
 
       <main className="main-content">
@@ -29,6 +42,7 @@ export function AppShell() {
 
         <section className="workspace">
           <CreateVault/>
+          <VaultLauncher/>
         </section>
 
         

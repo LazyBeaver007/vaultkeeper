@@ -2,6 +2,25 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
+use std::fs::read_to_string;
+
+
+
+#[tauri::command]
+fn open_vault(path:String)-> Result<String, String>
+{
+    let file_path = Path::new(&path).join("vault.json");
+
+    if !file_path.exists()
+    {
+        return Err("vault.json not found".into());
+    }
+
+    let content = read_to_string(file_path).map_err(|e| e.to_string())?;
+
+    Ok(content)
+}
+
 
 #[derive(Serialize, Deserialize)]
 struct VaultMeta 
@@ -45,7 +64,7 @@ fn create_vault(base_path:String, vault_name:String) -> Result<String, String>
 pub fn run()
 {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![create_vault])
+        .invoke_handler(tauri::generate_handler![create_vault, open_vault])
         .run(tauri::generate_context!())
         .expect("error running app");
 }
