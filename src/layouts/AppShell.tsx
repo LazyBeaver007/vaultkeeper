@@ -21,7 +21,24 @@ export function AppShell() {
         ):(<p> No Open Vault </p>)}
         <hr />
         <h3> Recent </h3>
-        {recentVaults.map((vault)=>(<p key={vault.path}>{vault.name}</p>))}
+        
+
+
+
+
+
+        {recentVaults.map((vault) => (
+  <p
+    key={vault.path}
+    onClick={() => setActiveVault(vault)}
+    style={{ cursor: "pointer" }}
+  >
+    {vault.name}
+  </p>
+))}
+
+
+
       </aside>
 
       <main className="main-content">

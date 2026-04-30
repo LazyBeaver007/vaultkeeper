@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { useVaultStore } from "../../stores/vaultStore";
+import { open } from '@tauri-apps/plugin-dialog';
+
 
 export function VaultLauncher() {
   const [path, setPath] = useState("D:\\Projects\\Eldoria");
@@ -24,6 +26,20 @@ export function VaultLauncher() {
     }
   }
 
+  async function pickFolder()
+  {
+      const  selected = await open(
+          {
+              directory: true,
+          }
+      );
+
+      if(selected)
+          {
+              setPath(selected as string);
+          }
+  }
+
   return (
     <div>
       <h2>Open Vault</h2>
@@ -34,6 +50,7 @@ export function VaultLauncher() {
       />
 
       <button onClick={openVault}>Open</button>
+      <button onClick={pickFolder}>Browse</button>
 
       <p>{status}</p>
     </div>
