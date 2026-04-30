@@ -9,6 +9,7 @@ export function AppShell() {
   const { activeTheme, setTheme } = useThemeStore();
   const activeVault = useVaultStore((s)=> s.activeVault);
   const recentVaults = useVaultStore((s)=>s.recentVaults);
+  const setActiveVault = useVaultStore((s) => s.setActiveVault);
 
 
   return (
