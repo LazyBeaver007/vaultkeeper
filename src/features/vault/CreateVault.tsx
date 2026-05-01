@@ -20,24 +20,28 @@ export function CreateVault() {
   }
 
   return (
-    <div>
-      <h2>Create Vault</h2>
+    <div className="tool-card">
+      <h2 className="tool-title">Create Vault</h2>
 
       <input
+        className="field"
         placeholder="Base Path"
         value={basePath}
         onChange={(e) => setBasePath(e.target.value)}
       />
 
       <input
+        className="field"
         placeholder="Vault Name"
         value={vaultName}
         onChange={(e) => setVaultName(e.target.value)}
       />
 
-      <button onClick={handleCreate}>Create</button>
+      <button type="button" onClick={handleCreate}>
+        Create
+      </button>
 
-      <p>{status}</p>
+      {status ? <p className="status-text">{status}</p> : null}
     </div>
   );
 }

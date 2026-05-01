@@ -41,18 +41,25 @@ export function VaultLauncher() {
   }
 
   return (
-    <div>
-      <h2>Open Vault</h2>
+    <div className="tool-card">
+      <h2 className="tool-title">Open Vault</h2>
 
       <input
+        className="field"
         value={path}
         onChange={(e) => setPath(e.target.value)}
       />
 
-      <button onClick={openVault}>Open</button>
-      <button onClick={pickFolder}>Browse</button>
+      <div className="button-row">
+        <button type="button" onClick={openVault}>
+          Open
+        </button>
+        <button type="button" onClick={pickFolder}>
+          Browse
+        </button>
+      </div>
 
-      <p>{status}</p>
+      {status ? <p className="status-text">{status}</p> : null}
     </div>
   );
 }
