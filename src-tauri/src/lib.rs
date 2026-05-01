@@ -62,6 +62,27 @@ fn read_page(vault_path: String, file_name: String) -> Result<String, String> {
     Ok(content)
 }
 
+#[tauri::command]
+fn save_page(vault_path: String, file_name: String, content: String) -> Result<(), String> {
+    let file_path = Path::new(&vault_path)
+        .join("pages")
+        .join(&file_name);
+
+    let existing = fs::read_to_string(&file_path).map_err(|e| e.to_string())?;
+    let mut json: serde_json::Value =
+        serde_json::from_str(&existing).map_err(|e| e.to_string())?;
+
+    json["content"] = serde_json::Value::String(content);
+
+    fs::write(
+        file_path,
+        serde_json::to_string_pretty(&json).unwrap(),
+    )
+    .map_err(|e| e.to_string())?;
+
+    Ok(())
+}
+
 
 
 #[tauri::command]
@@ -114,7 +135,14 @@ fn create_vault(base_path: String, vault_name: String) -> Result<String, String>
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![create_vault, open_vault, create_page, list_pages, read_page])
+        .invoke_handler(tauri::generate_handler![
+            create_vault,
+            open_vault,
+            create_page,
+            list_pages,
+            read_page,
+            save_page
+        ])
         .run(tauri::generate_context!())
         .expect("error running app");
 }
