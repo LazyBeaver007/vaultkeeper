@@ -9,6 +9,8 @@ import { PageManager } from "../pages/PageManager";
 import { usePageStore } from "../stores/pageStore";
 import { useThemeStore } from "../stores/themeStore";
 import { useVaultStore } from "../stores/vaultStore";
+import { useBacklinkStore } from "../stores/backLinkStore";
+
 
 export function AppShell() {
   const { activeTheme, setTheme } = useThemeStore();
@@ -17,7 +19,8 @@ export function AppShell() {
   const setActiveVault = useVaultStore((s) => s.setActiveVault);
   const activePage = usePageStore((s) => s.activePage);
   const updateActivePageContent = usePageStore((s) => s.updateActivePageContent);
-
+  
+  const backlinks = useBacklinkStore((s)=>s.backlinks);
   async function savePage() {
     if (!activeVault || !activePage) return;
 
@@ -119,24 +122,39 @@ export function AppShell() {
       <aside className="details-panel">
         <div className="details-content">
           <section className="panel-section">
-            <h3 className="section-title">Details</h3>
-            <div className="details-copy">
-              Details about the selected item will appear here.
-            </div>
+            <h2 className="section-title">Details</h2>
+
+            {activePage && (
+              <>
+                <p>{activePage.title}</p>
+
+                <hr />
+
+                <h3 className="section-title">Linked From</h3>
+
+                {backlinks.length ? (
+                  backlinks.map((b) => (
+                    <p key={b}>{b}</p>
+                  ))
+                ) : (
+                  <p>No backlinks</p>
+                )}
+              </>
+            )}
           </section>
 
           <section className="panel-section">
-          <CreateVault />
+            <CreateVault />
           </section>
 
           <section className="panel-section">
-          <VaultLauncher />
+            <VaultLauncher />
           </section>
 
           <section className="panel-section">
-          <CreatePage />
+            <CreatePage />
           </section>
-          </div>
+        </div>
       </aside>
     </div>
   );
