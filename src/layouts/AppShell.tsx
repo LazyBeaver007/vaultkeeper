@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { themes } from "../app/themes";
 import { Editor } from "../features/editor/Editor";
@@ -10,7 +10,7 @@ import { usePageStore } from "../stores/pageStore";
 import { useThemeStore } from "../stores/themeStore";
 import { useVaultStore } from "../stores/vaultStore";
 import { useBacklinkStore } from "../stores/backLinkStore";
-
+import { GraphContainer } from "../features/graph/GraphContainer";
 
 export function AppShell() {
   const { activeTheme, setTheme } = useThemeStore();
@@ -19,8 +19,9 @@ export function AppShell() {
   const setActiveVault = useVaultStore((s) => s.setActiveVault);
   const activePage = usePageStore((s) => s.activePage);
   const updateActivePageContent = usePageStore((s) => s.updateActivePageContent);
-  
   const backlinks = useBacklinkStore((s)=>s.backlinks);
+  const [viewMode, setViewMode] = useState<"editor" | "graph">("editor");
+
   async function savePage() {
     if (!activeVault || !activePage) return;
 
@@ -84,20 +85,44 @@ export function AppShell() {
         <header className="topbar">
           <span className="brand">VaultKeeper</span>
 
-          <select
-            value={activeTheme}
-            onChange={(e) => setTheme(e.target.value as typeof activeTheme)}
-          >
-            {themes.map((theme) => (
-              <option key={theme.id} value={theme.id}>
-                {theme.label}
-              </option>
-            ))}
-          </select>
+          <div className="topbar-actions">
+            <button
+              type="button"
+              onClick={() =>
+                setViewMode((current) =>
+                  current === "editor" ? "graph" : "editor",
+                )
+              }
+            >
+              {viewMode === "editor" ? "Graph View" : "Editor View"}
+            </button>
+
+            <select
+              value={activeTheme}
+              onChange={(e) => setTheme(e.target.value as typeof activeTheme)}
+            >
+              {themes.map((theme) => (
+                <option key={theme.id} value={theme.id}>
+                  {theme.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </header>
 
         <section className="workspace">
-          {activePage ? (
+          {viewMode === "graph" ? (
+            activeVault ? (
+              <article className="page-view">
+                <div className="page-view-header">
+                  <h1>Graph View</h1>
+                </div>
+                <GraphContainer />
+              </article>
+            ) : (
+              <div className="workspace-empty">Open a vault to view the graph</div>
+            )
+          ) : activePage ? (
             <article className="page-view">
               <div className="page-view-header">
                 <h1>{activePage.title}</h1>

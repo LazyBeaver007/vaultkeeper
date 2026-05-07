@@ -4,4 +4,5 @@ export const themes: ThemeDefinition[] = [
   { id: "codeon", label: "Codeon" },
   { id: "parchment", label: "Parchment" },
   { id: "neon-terminus", label: "Neon Terminus" },
+  { id: "sea-glass", label: "Sea Glass" },
 ];

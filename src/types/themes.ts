@@ -1,7 +1,8 @@
 export type ThemeName = 
     | "codeon"
     | "parchment"
-    | "neon-terminus";
+    | "neon-terminus"
+    | "sea-glass";
 
 export interface ThemeDefinition 
 {
