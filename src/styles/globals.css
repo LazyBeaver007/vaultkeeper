@@ -312,4 +312,14 @@ button:hover {
   .main-content {
     min-height: 50vh;
   }
+
+
+
+
+.wikilink {
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 }

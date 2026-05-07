@@ -19,7 +19,9 @@ export function AppShell() {
   const setActiveVault = useVaultStore((s) => s.setActiveVault);
   const activePage = usePageStore((s) => s.activePage);
   const updateActivePageContent = usePageStore((s) => s.updateActivePageContent);
-  const backlinks = useBacklinkStore((s)=>s.backlinks);
+  const setActivePage = usePageStore((s) => s.setActivePage);
+  const pages = usePageStore((s) => s.pages);
+  const backlinks = useBacklinkStore((s) => s.backlinks);
   const [viewMode, setViewMode] = useState<"editor" | "graph">("editor");
 
   async function savePage() {
@@ -30,6 +32,21 @@ export function AppShell() {
       fileName: activePage.fileName,
       content: activePage.content,
     });
+  }
+
+  // Handle clicking on a wikilink to navigate to that page
+  function handleLinkClick(pageName: string) {
+    if (!activeVault) return;
+    
+    // Find the page in the current vault's pages
+    const targetPage = pages.find(
+      (p) => p.title === pageName || p.fileName === pageName
+    );
+    
+    if (targetPage) {
+      setActivePage(targetPage);
+    }
+    // If page doesn't exist, you could optionally create it here
   }
 
   useEffect(() => {
@@ -136,6 +153,7 @@ export function AppShell() {
                 onChange={(html) => {
                   updateActivePageContent(html);
                 }}
+                onLinkClick={handleLinkClick}
               />
             </article>
           ) : (
