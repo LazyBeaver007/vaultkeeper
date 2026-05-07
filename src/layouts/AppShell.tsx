@@ -32,21 +32,35 @@ export function AppShell() {
       fileName: activePage.fileName,
       content: activePage.content,
     });
+
+    const raw = await invoke<string>("read_page", {
+      vaultPath: activeVault.path,
+      fileName: activePage.fileName,
+    });
+
+    setActivePage({
+      ...JSON.parse(raw),
+      fileName: activePage.fileName,
+    });
   }
 
   // Handle clicking on a wikilink to navigate to that page
-  function handleLinkClick(pageName: string) {
+  async function handleLinkClick(pageName: string) {
     if (!activeVault) return;
-    
-    // Find the page in the current vault's pages
-    const targetPage = pages.find(
-      (p) => p.title === pageName || p.fileName === pageName
-    );
-    
-    if (targetPage) {
-      setActivePage(targetPage);
-    }
-    // If page doesn't exist, you could optionally create it here
+
+    const fileName = pageName.endsWith(".vkp") ? pageName : `${pageName}.vkp`;
+
+    if (!pages.includes(fileName)) return;
+
+    const raw = await invoke<string>("read_page", {
+      vaultPath: activeVault.path,
+      fileName,
+    });
+
+    setActivePage({
+      ...JSON.parse(raw),
+      fileName,
+    });
   }
 
   useEffect(() => {
@@ -149,6 +163,8 @@ export function AppShell() {
               </div>
 
               <Editor
+                key={activePage.fileName}
+                pageId={activePage.fileName}
                 content={activePage.content}
                 onChange={(html) => {
                   updateActivePageContent(html);

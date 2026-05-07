@@ -8,7 +8,7 @@ export function convertWikilinks(html: string) {
           data-page="${page}"
           class="wikilink"
         >
-          ${page}
+          [[${page}]]
         </span>
       `;
     }

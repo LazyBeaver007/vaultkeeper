@@ -1,50 +1,95 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Wikilink } from "./extensions/Wikilink";
 import { convertWikilinks } from "../../utils/convertWikilinks";
+import { serializeWikilinks } from "../../utils/serializeWikilinks";
 
 interface Props {
+  pageId: string;
   content: string;
   onChange: (html: string) => void;
   onLinkClick?: (page: string) => void;
 }
 
-export function Editor({ content, onChange, onLinkClick }: Props) {
+export function Editor({ pageId, content, onChange, onLinkClick }: Props) {
+  const lastEmittedContent = useRef("");
+
+  function toEditorContent(value: string) {
+    return convertWikilinks(serializeWikilinks(value));
+  }
+
   const editor = useEditor({
     extensions: [StarterKit, Wikilink],
-    content,
+    content: toEditorContent(content),
     onUpdate: ({ editor }) => {
-      const html = convertWikilinks(editor.getHTML());
+      const html = serializeWikilinks(editor.getHTML());
+      lastEmittedContent.current = html;
       onChange(html);
     },
   });
 
   useEffect(() => {
-    if (editor && content !== editor.getHTML()) {
-      editor.commands.setContent(content);
+    lastEmittedContent.current = "";
+  }, [pageId]);
+
+  useEffect(() => {
+    if (!editor) return;
+
+    if (content === lastEmittedContent.current) {
+      return;
     }
-  }, [content]);
+
+    const nextContent = toEditorContent(content);
+
+    if (nextContent !== editor.getHTML()) {
+      editor.commands.setContent(nextContent, { emitUpdate: false });
+    }
+  }, [content, editor]);
 
   useEffect(() => {
     if (!editor) return;
 
     const dom = editor.view.dom;
 
-    function handleClick(e: Event) {
-      const target = e.target as HTMLElement;
+    function handleClick(e: MouseEvent) {
+      const target = e.target as HTMLElement | null;
+      const wikilink = target?.closest("[data-page]") as HTMLElement | null;
 
-      if (target.dataset.page && onLinkClick) {
-        onLinkClick(target.dataset.page);
+      if (!wikilink?.dataset.page || !onLinkClick) {
+        return;
+      }
+
+      // Only follow wikilinks on explicit modifier-click so editing text
+      // doesn't accidentally switch the active page.
+      if (!(e.ctrlKey || e.metaKey)) {
+        return;
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
+      onLinkClick(wikilink.dataset.page);
+    }
+
+    function handleAuxClick(e: MouseEvent) {
+      const target = e.target as HTMLElement | null;
+      const wikilink = target?.closest("[data-page]") as HTMLElement | null;
+
+      if (e.button === 1 && wikilink?.dataset.page && onLinkClick) {
+        e.preventDefault();
+        e.stopPropagation();
+        onLinkClick(wikilink.dataset.page);
       }
     }
 
     dom.addEventListener("click", handleClick);
+    dom.addEventListener("auxclick", handleAuxClick);
 
     return () => {
       dom.removeEventListener("click", handleClick);
+      dom.removeEventListener("auxclick", handleAuxClick);
     };
-  }, [editor]);
+  }, [editor, onLinkClick]);
 
   if (!editor) return null;
 

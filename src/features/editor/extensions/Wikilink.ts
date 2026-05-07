@@ -17,6 +17,9 @@ export const Wikilink = Mark.create({
     return [
       {
         tag: "span[data-wikilink]",
+        getAttrs: (element) => ({
+          page: (element as HTMLElement).getAttribute("data-page"),
+        }),
       },
     ];
   },
@@ -26,6 +29,7 @@ export const Wikilink = Mark.create({
       "span",
       mergeAttributes(HTMLAttributes, {
         "data-wikilink": "",
+        "data-page": HTMLAttributes.page,
         class: "wikilink",
       }),
       0,
