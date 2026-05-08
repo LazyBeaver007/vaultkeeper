@@ -229,6 +229,13 @@ button:hover {
   gap: 0.45rem;
 }
 
+.vault-row,
+.page-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
 .vault-link,
 .page-link {
   width: 100%;
@@ -237,6 +244,19 @@ button:hover {
   border: 1px solid transparent;
   border-radius: 10px;
   padding: 0.45rem 0.55rem;
+  color: var(--text);
+}
+
+.page-action {
+  flex: 0 0 auto;
+  padding: 0.45rem 0.7rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--panel-soft) 82%, var(--bg));
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.page-action:hover {
   color: var(--text);
 }
 
@@ -654,6 +674,78 @@ button:hover {
 
 .status-text {
   font-size: 0.95rem;
+}
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 1.2rem;
+  background: rgba(5, 9, 14, 0.42);
+  backdrop-filter: blur(10px);
+}
+
+.dialog-card {
+  width: min(460px, 100%);
+  padding: 1.2rem;
+  border: 1px solid color-mix(in srgb, var(--border) 86%, transparent);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 42%),
+    color-mix(in srgb, var(--panel) 94%, var(--bg));
+  box-shadow:
+    0 30px 80px color-mix(in srgb, var(--shadow) 95%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.dialog-header {
+  margin-bottom: 0.5rem;
+}
+
+.dialog-title {
+  color: var(--heading);
+  font-family: var(--font-heading, var(--font-body));
+  font-size: 1.25rem;
+  line-height: 1.1;
+}
+
+.dialog-copy {
+  color: var(--text);
+  line-height: 1.65;
+}
+
+.dialog-warning {
+  margin-top: 0.9rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  color: var(--text);
+}
+
+.dialog-list {
+  margin-top: 0.8rem;
+  padding-left: 1.1rem;
+  color: var(--muted);
+}
+
+.dialog-list li + li {
+  margin-top: 0.3rem;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  margin-top: 1.1rem;
+}
+
+.button-danger {
+  border-color: color-mix(in srgb, #d94b62 42%, var(--border));
+  background: color-mix(in srgb, #d94b62 12%, var(--panel-soft));
+  color: var(--text);
 }
 
 .wikilink {

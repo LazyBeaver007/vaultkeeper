@@ -1,6 +1,7 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { themes } from "../app/themes";
+import { ConfirmationDialog } from "../components/ConfirmationDialog";
 import { Editor } from "../features/editor/Editor";
 import { CreatePage } from "../features/pages/CreatePage";
 import { ThemeCustomizer } from "../features/themes/ThemeCustomizer";
@@ -20,6 +21,7 @@ export function AppShell() {
   const activeVault = useVaultStore((s) => s.activeVault);
   const recentVaults = useVaultStore((s) => s.recentVaults);
   const setActiveVault = useVaultStore((s) => s.setActiveVault);
+  const removeRecentVault = useVaultStore((s) => s.removeRecentVault);
   const activePage = usePageStore((s) => s.activePage);
   const updateActivePageContent = usePageStore((s) => s.updateActivePageContent);
   const setActivePage = usePageStore((s) => s.setActivePage);
@@ -30,6 +32,7 @@ export function AppShell() {
   const setPanelWidth = useUiStore((s) => s.setPanelWidth);
   const togglePanel = useUiStore((s) => s.togglePanel);
   const [isResizing, setIsResizing] = useState<"left" | "right" | null>(null);
+  const [vaultToRemove, setVaultToRemove] = useState<{ name: string; path: string } | null>(null);
   const [viewMode, setViewMode] = useState<"editor" | "graph">("editor");
 
   async function savePage() {
@@ -135,14 +138,22 @@ export function AppShell() {
           {recentVaults.length ? (
             <div className="vault-list">
               {recentVaults.map((vault) => (
-                <button
-                  key={vault.path}
-                  className="vault-link"
-                  type="button"
-                  onClick={() => setActiveVault(vault)}
-                >
-                  {vault.name}
-                </button>
+                <div key={vault.path} className="vault-row">
+                  <button
+                    className="vault-link"
+                    type="button"
+                    onClick={() => setActiveVault(vault)}
+                  >
+                    {vault.name}
+                  </button>
+                  <button
+                    type="button"
+                    className="page-action"
+                    onClick={() => setVaultToRemove(vault)}
+                  >
+                    Remove
+                  </button>
+                </div>
               ))}
             </div>
           ) : (
@@ -293,6 +304,24 @@ export function AppShell() {
           </section>
         </div>
       </aside>
+
+      <ConfirmationDialog
+        open={Boolean(vaultToRemove)}
+        title="Remove Vault From Launcher?"
+        description={
+          vaultToRemove
+            ? `"${vaultToRemove.name}" will be removed from your recent vaults list, but all files stay untouched on disk.`
+            : ""
+        }
+        confirmLabel="Remove From Launcher"
+        onCancel={() => setVaultToRemove(null)}
+        onConfirm={() => {
+          if (vaultToRemove) {
+            removeRecentVault(vaultToRemove.path);
+          }
+          setVaultToRemove(null);
+        }}
+      />
     </div>
   );
 }

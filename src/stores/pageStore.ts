@@ -7,6 +7,7 @@ interface PageState {
   setPages: (pages: string[]) => void;
   setActivePage: (page: PageDocument | null) => void;
   updateActivePageContent: (content: string) => void;
+  removePage: (fileName: string) => void;
 }
 
 export const usePageStore = create<PageState>((set) => ({
@@ -19,5 +20,11 @@ export const usePageStore = create<PageState>((set) => ({
       activePage: state.activePage
         ? { ...state.activePage, content }
         : null,
+    })),
+  removePage: (fileName) =>
+    set((state) => ({
+      pages: state.pages.filter((page) => page !== fileName),
+      activePage:
+        state.activePage?.fileName === fileName ? null : state.activePage,
     })),
 }));

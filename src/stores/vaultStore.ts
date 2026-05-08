@@ -15,6 +15,7 @@ interface Store
     activeVault: VaultState | null;
     recentVaults: VaultState[];
     setActiveVault: (vault: VaultState) => void;
+    removeRecentVault: (path: string) => void;
 }
 
 export const useVaultStore = create<Store>((set) => ({
@@ -33,6 +34,19 @@ export const useVaultStore = create<Store>((set) => ({
       return {
         activeVault: vault,
         recentVaults: updated,
+      };
+    }),
+  removeRecentVault: (path) =>
+    set((state) => {
+      const recentVaults = state.recentVaults.filter((vault) => vault.path !== path);
+      const activeVault =
+        state.activeVault?.path === path ? null : state.activeVault;
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(recentVaults));
+
+      return {
+        activeVault,
+        recentVaults,
       };
     }),
 }));
