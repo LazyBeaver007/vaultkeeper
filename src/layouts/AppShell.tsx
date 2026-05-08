@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { themes } from "../app/themes";
 import { Editor } from "../features/editor/Editor";
 import { CreatePage } from "../features/pages/CreatePage";
+import { ThemeCustomizer } from "../features/themes/ThemeCustomizer";
 import { CreateVault } from "../features/vault/CreateVault";
 import { VaultLauncher } from "../features/vault/VaultLauncher";
+import { PanelResizeHandle } from "./PanelResizeHandle";
 import { PageManager } from "../pages/PageManager";
 import { usePageStore } from "../stores/pageStore";
 import { useThemeStore } from "../stores/themeStore";
+import { panelLimits, useUiStore } from "../stores/uiStore";
 import { useVaultStore } from "../stores/vaultStore";
 import { useBacklinkStore } from "../stores/backLinkStore";
 import { GraphContainer } from "../features/graph/GraphContainer";
@@ -22,6 +25,11 @@ export function AppShell() {
   const setActivePage = usePageStore((s) => s.setActivePage);
   const pages = usePageStore((s) => s.pages);
   const backlinks = useBacklinkStore((s) => s.backlinks);
+  const leftPanel = useUiStore((s) => s.leftPanel);
+  const rightPanel = useUiStore((s) => s.rightPanel);
+  const setPanelWidth = useUiStore((s) => s.setPanelWidth);
+  const togglePanel = useUiStore((s) => s.togglePanel);
+  const [isResizing, setIsResizing] = useState<"left" | "right" | null>(null);
   const [viewMode, setViewMode] = useState<"editor" | "graph">("editor");
 
   async function savePage() {
@@ -77,9 +85,45 @@ export function AppShell() {
     return () => clearTimeout(timeout);
   }, [activePage?.content, activePage?.fileName, activeVault?.path]);
 
+  useEffect(() => {
+    if (!isResizing) {
+      return;
+    }
+
+    function handlePointerMove(event: PointerEvent) {
+      if (isResizing === "left") {
+        setPanelWidth("left", event.clientX);
+        return;
+      }
+
+      const nextWidth = window.innerWidth - event.clientX;
+      setPanelWidth("right", nextWidth);
+    }
+
+    function handlePointerUp() {
+      setIsResizing(null);
+    }
+
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp);
+
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+    };
+  }, [isResizing, setPanelWidth]);
+
+  const shellStyle: CSSProperties = {
+    "--left-panel-size": leftPanel.collapsed ? "0px" : `${leftPanel.width}px`,
+    "--right-panel-size": rightPanel.collapsed ? "0px" : `${rightPanel.width}px`,
+  } as CSSProperties;
+
   return (
-    <div className="app-shell">
-      <aside className="sidebar">
+    <div
+      className={`app-shell${isResizing ? " is-resizing" : ""}`}
+      style={shellStyle}
+    >
+      <aside className={`sidebar app-panel${leftPanel.collapsed ? " is-collapsed" : ""}`}>
         <section className="panel-section">
           <h2 className="section-title">Vaults</h2>
           <p className="current-vault">{activeVault ? activeVault.name : "No open vault"}</p>
@@ -111,6 +155,21 @@ export function AppShell() {
           <PageManager />
         </section>
       </aside>
+
+      <PanelResizeHandle
+        side="left"
+        collapsed={leftPanel.collapsed}
+        onToggle={() => togglePanel("left")}
+        onPointerDown={(event) => {
+          event.preventDefault();
+          if (leftPanel.collapsed) {
+            setPanelWidth("left", panelLimits.left.default);
+            return;
+          }
+
+          setIsResizing("left");
+        }}
+      />
 
       <main className="main-content">
         <header className="topbar">
@@ -178,7 +237,22 @@ export function AppShell() {
         </section>
       </main>
 
-      <aside className="details-panel">
+      <PanelResizeHandle
+        side="right"
+        collapsed={rightPanel.collapsed}
+        onToggle={() => togglePanel("right")}
+        onPointerDown={(event) => {
+          event.preventDefault();
+          if (rightPanel.collapsed) {
+            setPanelWidth("right", panelLimits.right.default);
+            return;
+          }
+
+          setIsResizing("right");
+        }}
+      />
+
+      <aside className={`details-panel app-panel${rightPanel.collapsed ? " is-collapsed" : ""}`}>
         <div className="details-content">
           <section className="panel-section">
             <h2 className="section-title">Details</h2>
@@ -212,6 +286,10 @@ export function AppShell() {
 
           <section className="panel-section">
             <CreatePage />
+          </section>
+
+          <section className="panel-section">
+            <ThemeCustomizer />
           </section>
         </div>
       </aside>

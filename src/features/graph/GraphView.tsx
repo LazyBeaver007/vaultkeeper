@@ -1,6 +1,7 @@
-
 import { useEffect, useRef } from "react";
 import CytoscapeComponent from "react-cytoscapejs";
+import { resolveTheme } from "../../app/themes";
+import { useThemeStore } from "../../stores/themeStore";
 
 interface Props
 {
@@ -11,6 +12,9 @@ interface Props
 export function GraphView({ elements, onNodeClick }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const cyRef = useRef<any>(null);
+  const activeTheme = useThemeStore((state) => state.activeTheme);
+  const customization = useThemeStore((state) => state.customization);
+  const graphTheme = resolveTheme(activeTheme, customization).graph;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -97,13 +101,13 @@ export function GraphView({ elements, onNodeClick }: Props) {
             selector: "node",
             style: {
               label: "data(label)",
-              "background-color": "#6d7cff",
+              "background-color": graphTheme.node,
               width: 26,
               height: 26,
               "font-size": 9,
               "text-max-width": 72,
               "text-wrap": "ellipsis",
-              color: "#fff",
+              color: graphTheme.label,
               "text-valign": "bottom",
               "text-halign": "center",
               "text-margin-y": 10,
@@ -114,8 +118,8 @@ export function GraphView({ elements, onNodeClick }: Props) {
             selector: "edge",
             style: {
               width: 1,
-              "line-color": "#5b6474",
-              "target-arrow-color": "#5b6474",
+              "line-color": graphTheme.edge,
+              "target-arrow-color": graphTheme.edge,
               "arrow-scale": 0.7,
               "target-arrow-shape": "triangle",
               "curve-style": "bezier",

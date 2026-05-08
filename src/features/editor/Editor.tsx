@@ -1,6 +1,10 @@
-import { useEditor, EditorContent } from "@tiptap/react";
+import { EditorContent, useEditor } from "@tiptap/react";
+import Underline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
 import { useEffect, useRef } from "react";
+import { FloatingToolbar } from "./FloatingToolbar";
+import { InlineStyle } from "./extensions/InlineStyle";
+import { TextAlign } from "./extensions/TextAlign";
 import { Wikilink } from "./extensions/Wikilink";
 import { convertWikilinks } from "../../utils/convertWikilinks";
 import { serializeWikilinks } from "../../utils/serializeWikilinks";
@@ -20,7 +24,22 @@ export function Editor({ pageId, content, onChange, onLinkClick }: Props) {
   }
 
   const editor = useEditor({
-    extensions: [StarterKit, Wikilink],
+    extensions: [
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2],
+        },
+      }),
+      Underline,
+      InlineStyle,
+      TextAlign,
+      Wikilink,
+    ],
+    editorProps: {
+      attributes: {
+        class: "editor-content",
+      },
+    },
     content: toEditorContent(content),
     onUpdate: ({ editor }) => {
       const html = serializeWikilinks(editor.getHTML());
@@ -93,5 +112,12 @@ export function Editor({ pageId, content, onChange, onLinkClick }: Props) {
 
   if (!editor) return null;
 
-  return <EditorContent editor={editor} />;
+  return (
+    <section className="editor-shell">
+      <FloatingToolbar editor={editor} />
+      <div className="editor-frame">
+        <EditorContent editor={editor} />
+      </div>
+    </section>
+  );
 }
