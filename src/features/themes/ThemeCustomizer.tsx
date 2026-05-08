@@ -73,9 +73,6 @@ export function ThemeCustomizer() {
       <div className="theme-card-header">
         <div>
           <h3 className="tool-title">Theme Studio</h3>
-          <p className="status-text">
-            Live-tune atmosphere, typography, and future graph styling.
-          </p>
         </div>
 
         <button type="button" onClick={resetCustomization}>
@@ -87,7 +84,6 @@ export function ThemeCustomizer() {
         <div className="theme-preview-chip" style={{ backgroundColor: theme.tokens.accent }} />
         <div>
           <strong>{theme.label}</strong>
-          <p>Preset with live overrides, ready for saved community themes.</p>
         </div>
       </div>
 

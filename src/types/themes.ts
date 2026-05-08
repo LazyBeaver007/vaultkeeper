@@ -1,5 +1,10 @@
 export type ThemeName =
   | "codeon"
+  | "cloud-glass"
+  | "horror"
+  | "medieval"
+  | "venus"
+  | "neptune"
   | "parchment"
   | "neon-terminus"
   | "sea-glass";
