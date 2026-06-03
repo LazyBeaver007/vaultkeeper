@@ -1,4 +1,5 @@
 # Vaultkeeper
+<img width="1910" height="1079" alt="image" src="https://github.com/user-attachments/assets/842d179b-d102-467f-9e1d-a03aba86e03e" />
 
 Vaultkeeper is a desktop worldbuilding and creative writing app built with Tauri, React, TypeScript, Zustand, and Tiptap.
 
