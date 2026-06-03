@@ -32,6 +32,9 @@ fn create_page(vault_path:String, title:String) -> Result<String,String>
     Ok("Page created".into())
 }
 
+
+
+
 #[tauri::command]
 fn list_pages(vault_path:String) -> Result<Vec<String>,String>
 {
