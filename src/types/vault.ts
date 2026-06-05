@@ -1,7 +1,7 @@
 export interface VaultMeta 
 {
     name: string;
-    verson: string;
+    version: string;
     theme: string;
 }
 

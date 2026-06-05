@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
 import { useVaultStore } from "../../stores/vaultStore";
 import { open } from '@tauri-apps/plugin-dialog';
+import { openVaultAtPath } from "./openVault";
 
 
 export function VaultLauncher() {
@@ -12,13 +12,8 @@ export function VaultLauncher() {
 
   async function openVault() {
     try {
-      const json = await invoke<string>("open_vault", { path });
-      const meta = JSON.parse(json);
-
-      setActiveVault({
-        path,
-        ...meta,
-      });
+      const vault = await openVaultAtPath(path);
+      setActiveVault(vault);
 
       setStatus("Vault opened");
     } catch (err) {

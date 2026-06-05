@@ -3,6 +3,7 @@ import { useThemeStore } from "../stores/themeStore"
 import { useEffect } from "react";
 import { useVaultStore } from "../stores/vaultStore";
 import { resolveTheme, themeToCssVariables } from "./themes";
+import { openVaultAtPath } from "../features/vault/openVault";
 
 export default function App() 
 {
@@ -16,7 +17,9 @@ export default function App()
               {
                   if (!recentVaults.length) return;
 
-                  setActiveVault(recentVaults[0]);
+                  void openVaultAtPath(recentVaults[0].path).then(setActiveVault).catch(() => {
+                    // Ignore stale recent vaults on boot and let the launcher recover.
+                  });
               },[]);
 
 

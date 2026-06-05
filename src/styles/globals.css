@@ -311,6 +311,61 @@ button:hover {
   position: relative;
 }
 
+.editor-static-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 0.9rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--border) 84%, transparent);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 58%),
+    color-mix(in srgb, var(--panel) 80%, var(--bg));
+}
+
+.editor-static-toolbar-main {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.editor-static-toolbar-button {
+  border-radius: 12px;
+}
+
+.editor-static-toolbar-button.is-active {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 48%, transparent);
+}
+
+.editor-paragraph-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.editor-toolbar-label {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.editor-diagnostics {
+  display: grid;
+  gap: 0.22rem;
+  justify-items: end;
+}
+
+.editor-status-text {
+  color: color-mix(in srgb, var(--text) 88%, #9ad0ff 12%);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  text-align: right;
+}
+
 .editor-frame {
   position: relative;
   border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
@@ -336,9 +391,10 @@ button:hover {
 }
 
 .editor-content.ProseMirror {
+  position: relative;
   min-height: 540px;
   max-width: 820px;
-  margin: 0 auto;
+  margin: 0;
   padding: 2.6rem 2.8rem 3.1rem;
   color: var(--text);
   font-size: 1.05rem;
@@ -347,6 +403,7 @@ button:hover {
   line-height: 1.8;
   letter-spacing: 0.005em;
   outline: none;
+  text-align: left;
 }
 
 .editor-content.ProseMirror > *:first-child {
@@ -418,6 +475,103 @@ button:hover {
   text-underline-offset: 0.16em;
 }
 
+.editor-content.ProseMirror img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 16px;
+  object-fit: contain;
+  object-position: center center;
+  box-shadow:
+    0 12px 28px color-mix(in srgb, var(--shadow) 54%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.editor-content.ProseMirror img[data-align="left"] {
+  object-position: left center;
+}
+
+.editor-content.ProseMirror img[data-align="right"] {
+  object-position: right center;
+}
+
+.editor-content.ProseMirror img[width],
+.editor-content.ProseMirror img[height] {
+  object-fit: cover;
+}
+
+.editor-content.ProseMirror img[data-align="left"] {
+  margin: 1rem auto 1rem 0;
+}
+
+.editor-content.ProseMirror img[data-align="center"] {
+  margin: 1rem auto;
+}
+
+.editor-content.ProseMirror img[data-align="right"] {
+  margin: 1rem 0 1rem auto;
+}
+
+.editor-image-node {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.editor-image-node[data-floating="true"] {
+  position: absolute;
+  max-width: none;
+  margin: 0;
+  z-index: 2;
+}
+
+.editor-image-node[data-floating="true"] .editor-image-wrapper {
+  cursor: grab;
+}
+
+.editor-image-node[data-floating="true"][data-resize-state="true"] .editor-image-wrapper {
+  cursor: grabbing;
+}
+
+.editor-image-node[data-resize-state="true"] img {
+  user-select: none;
+}
+
+.editor-image-wrapper {
+  max-width: 100%;
+}
+
+.editor-image-resize-handle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 52%, white 22%);
+  background: color-mix(in srgb, var(--accent) 82%, white 18%);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+}
+
+.editor-image-resize-handle.is-top-left {
+  top: -5px;
+  left: -5px;
+}
+
+.editor-image-resize-handle.is-top-right {
+  top: -5px;
+  right: -5px;
+}
+
+.editor-image-resize-handle.is-bottom-left {
+  bottom: -5px;
+  left: -5px;
+}
+
+.editor-image-resize-handle.is-bottom-right {
+  right: -5px;
+  bottom: -5px;
+}
+
 .editor-bubble-menu {
   display: flex;
   align-items: center;
@@ -433,6 +587,13 @@ button:hover {
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(18px);
   animation: bubble-menu-enter 180ms ease;
+}
+
+.editor-toolbar-hint {
+  padding: 0 0.35rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  white-space: nowrap;
 }
 
 .editor-toolbar-group {
@@ -808,5 +969,17 @@ button:hover {
     min-height: 420px;
     padding: 1.5rem 1.15rem 2rem;
     font-size: 1rem;
+  }
+
+  .editor-static-toolbar {
+    flex-direction: column;
+  }
+
+  .editor-diagnostics {
+    justify-items: start;
+  }
+
+  .editor-status-text {
+    text-align: left;
   }
 }

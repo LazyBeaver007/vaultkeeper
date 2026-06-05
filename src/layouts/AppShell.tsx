@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { themes } from "../app/themes";
 import { ConfirmationDialog } from "../components/ConfirmationDialog";
 import { Editor } from "../features/editor/Editor";
+import { openVaultAtPath } from "../features/vault/openVault";
 import { CreatePage } from "../features/pages/CreatePage";
 import { ThemeCustomizer } from "../features/themes/ThemeCustomizer";
 import { CreateVault } from "../features/vault/CreateVault";
@@ -142,7 +143,9 @@ export function AppShell() {
                   <button
                     className="vault-link"
                     type="button"
-                    onClick={() => setActiveVault(vault)}
+                    onClick={() => {
+                      void openVaultAtPath(vault.path).then(setActiveVault);
+                    }}
                   >
                     {vault.name}
                   </button>
@@ -223,7 +226,7 @@ export function AppShell() {
             ) : (
               <div className="workspace-empty">Open a vault to view the graph</div>
             )
-          ) : activePage ? (
+          ) : activePage && activeVault ? (
             <article className="page-view">
               <div className="page-view-header">
                 <h1>{activePage.title}</h1>
@@ -235,6 +238,7 @@ export function AppShell() {
               <Editor
                 key={activePage.fileName}
                 pageId={activePage.fileName}
+                vaultPath={activeVault.path}
                 content={activePage.content}
                 onChange={(html) => {
                   updateActivePageContent(html);
