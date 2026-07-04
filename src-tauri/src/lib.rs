@@ -120,6 +120,8 @@ fn open_vault(app: AppHandle, path: String) -> Result<String, String> {
     Ok(content)
 }
 
+
+
 #[derive(Serialize, Deserialize)]
 struct VaultMeta {
     name: String,
@@ -142,6 +144,7 @@ fn create_vault(base_path: String, vault_name: String) -> Result<String, String>
     fs::create_dir_all(vault_path.join("assets/images")).map_err(|e| e.to_string())?;
     fs::create_dir_all(vault_path.join("assets/thumbnails")).map_err(|e| e.to_string())?;
     fs::create_dir_all(vault_path.join("assets/fonts")).map_err(|e| e.to_string())?;
+
 
     let meta = VaultMeta {
         name: vault_name.clone(),
